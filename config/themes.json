@@ -1,0 +1,245 @@
+{
+  "themes": [
+    /* ────────────── LAYAN (dark + light) ────────────── */
+    { "name": "Layan Plasma Dark",  "category": "plasma",
+      "git": "https://github.com/vinceliuice/Layan-kde",
+      "subdir": "Layan-dark",                 "dest": "/usr/share/plasma/desktoptheme" },
+
+    { "name": "Layan Plasma Light", "category": "plasma",
+      "git": "https://github.com/vinceliuice/Layan-kde",
+      "subdir": "Layan-light",                "dest": "/usr/share/plasma/desktoptheme" },
+
+    { "name": "Layan GTK Dark",     "category": "gtk",
+      "git": "https://github.com/vinceliuice/Layan-gtk-theme",
+      "subdir": "dark",                        "dest": "/usr/share/themes" },
+
+    { "name": "Layan GTK Light",    "category": "gtk",
+      "git": "https://github.com/vinceliuice/Layan-gtk-theme",
+      "subdir": "light",                       "dest": "/usr/share/themes" },
+
+    { "name": "Layan Kvantum",      "category": "kvantum",
+      "git": "https://github.com/vinceliuice/Layan-kde",
+      "subdir": "Kvantum",                    "dest": "/usr/share/Kvantum" },
+
+    { "name": "Layan SDDM",         "category": "sddm",
+      "git": "https://github.com/vinceliuice/Layan-sddm",
+      "subdir": ".",                          "dest": "/usr/share/sddm/themes" },
+
+    { "name": "Layan Plymouth",     "category": "plymouth",
+      "git": "https://github.com/vinceliuice/plymouth-themes",
+      "subdir": "layan",                      "dest": "/usr/share/plymouth/themes" },
+
+    /* ────────────── ANT / ANT-DARK ────────────── */
+    { "name": "Ant Plasma",         "category": "plasma",
+      "git": "https://github.com/vinceliuice/Ant-KDE",
+      "subdir": "Ant",                         "dest": "/usr/share/plasma/desktoptheme" },
+
+    { "name": "Ant-Dark Plasma",    "category": "plasma",
+      "git": "https://github.com/vinceliuice/Ant-KDE",
+      "subdir": "Ant-Dark",                    "dest": "/usr/share/plasma/desktoptheme" },
+
+    { "name": "Ant GTK",            "category": "gtk",
+      "git": "https://github.com/EliverLara/Ant",
+      "subdir": "Ant",                         "dest": "/usr/share/themes" },
+
+    { "name": "Ant-Dark GTK",       "category": "gtk",
+      "git": "https://github.com/EliverLara/Ant",
+      "subdir": "Ant-Dark",                    "dest": "/usr/share/themes" },
+
+    { "name": "Ant Kvantum",        "category": "kvantum",
+      "git": "https://github.com/vinceliuice/Ant-KDE",
+      "subdir": "Kvantum",                    "dest": "/usr/share/Kvantum" },
+
+    /* ────────────── SCRATCH ────────────── */
+    { "name": "Scratch Plasma",     "category": "plasma",
+      "git": "https://github.com/vinceliuice/Scratch-KDE",
+      "subdir": ".",                          "dest": "/usr/share/plasma/desktoptheme" },
+
+    { "name": "Scratch GTK",        "category": "gtk",
+      "git": "https://github.com/vinceliuice/Scratch-gtk-theme",
+      "subdir": ".",                          "dest": "/usr/share/themes" },
+
+    { "name": "Scratch Kvantum",    "category": "kvantum",
+      "git": "https://github.com/vinceliuice/Scratch-KDE",
+      "subdir": "Kvantum",                    "dest": "/usr/share/Kvantum" },
+
+    /* ────────────── ORCHIS-DARK ────────────── */
+    { "name": "Orchis-Dark Plasma", "category": "plasma",
+      "git": "https://github.com/vinceliuice/Orchis-kde",
+      "subdir": "Orchis-dark",                "dest": "/usr/share/plasma/desktoptheme" },
+
+    { "name": "Orchis-Dark GTK",    "category": "gtk",
+      "git": "https://github.com/vinceliuice/Orchis-theme",
+      "subdir": "Orchis-Dark",                "dest": "/usr/share/themes" },
+
+    { "name": "Orchis-Dark Kvantum","category": "kvantum",
+      "git": "https://github.com/vinceliuice/Orchis-kde",
+      "subdir": "Kvantum",                    "dest": "/usr/share/Kvantum" },
+
+    /* ────────────── OTTO ────────────── */
+    { "name": "Otto Plasma",        "category": "plasma",
+      "git": "https://github.com/vinceliuice/Otto-kde",
+      "subdir": ".",                          "dest": "/usr/share/plasma/desktoptheme" },
+
+    { "name": "Otto GTK",           "category": "gtk",
+      "git": "https://github.com/vinceliuice/Otto-gtk-theme",
+      "subdir": ".",                          "dest": "/usr/share/themes" },
+
+    { "name": "Otto Kvantum",       "category": "kvantum",
+      "git": "https://github.com/vinceliuice/Otto-kde",
+      "subdir": "Kvantum",                    "dest": "/usr/share/Kvantum" },
+
+    /* ────────────── SWEET & SWEET-MARS ────────────── */
+    { "name": "Sweet Plasma",       "category": "plasma",
+      "git": "https://github.com/EliverLara/Sweet-kde",
+      "subdir": "Sweet",                       "dest": "/usr/share/plasma/desktoptheme" },
+
+    { "name": "Sweet-Mars Plasma",  "category": "plasma",
+      "git": "https://github.com/EliverLara/Sweet-kde",
+      "subdir": "Sweet-Mars",                  "dest": "/usr/share/plasma/desktoptheme" },
+
+    { "name": "Sweet GTK",          "category": "gtk",
+      "git": "https://github.com/EliverLara/Sweet",
+      "subdir": "Sweet",                       "dest": "/usr/share/themes" },
+
+    { "name": "Sweet Kvantum",      "category": "kvantum",
+      "git": "https://github.com/EliverLara/Sweet-kde",
+      "subdir": "Kvantum",                    "dest": "/usr/share/Kvantum" },
+
+    { "name": "Sweet SDDM",         "category": "sddm",
+      "git": "https://github.com/EliverLara/Sweet-Home-SDDM",
+      "subdir": ".",                          "dest": "/usr/share/sddm/themes" },
+
+    /* ────────────── STONE ────────────── */
+    { "name": "Stone Plasma",       "category": "plasma",
+      "git": "https://github.com/vinceliuice/Stone-kde",
+      "subdir": ".",                          "dest": "/usr/share/plasma/desktoptheme" },
+
+    { "name": "Stone GTK",          "category": "gtk",
+      "git": "https://github.com/vinceliuice/Stone-gtk-theme",
+      "subdir": ".",                          "dest": "/usr/share/themes" },
+
+    { "name": "Stone Kvantum",      "category": "kvantum",
+      "git": "https://github.com/vinceliuice/Stone-kde",
+      "subdir": "Kvantum",                    "dest": "/usr/share/Kvantum" },
+
+    /* ────────────── ICON THEMES ────────────── */
+    { "name": "Tela Icons (purple)", "category": "icons",
+      "git": "https://github.com/vinceliuice/Tela-icon-theme",
+      "subdir": "Tela-purple",               "dest": "/usr/share/icons" },
+
+    { "name": "Kora Icons (purple)", "category": "icons",
+      "git": "https://github.com/bikass/Kora",
+      "subdir": "Kora-Purple",               "dest": "/usr/share/icons" },
+
+    { "name": "Ant-Dark Icons",      "category": "icons",
+      "git": "https://github.com/EliverLara/Ant",
+      "subdir": "Ant-Dark",                  "dest": "/usr/share/icons" },
+
+    /* ────────────── CURSOR THEMES ────────────── */
+    { "name": "Volantes Cursors",    "category": "cursors",
+      "git": "https://github.com/varlesh/volantes-cursors",
+      "subdir": ".",                          "dest": "/usr/share/icons" },
+
+    { "name": "Bibata Cursors",      "category": "cursors",
+      "git": "https://github.com/ful1e5/Bibata_Cursor",
+      "subdir": ".",                          "dest": "/usr/share/icons" },
+
+    { "name": "Catppuccin Cursors",  "category": "cursors",
+      "git": "https://github.com/catppuccin/cursors",
+      "subdir": "macOS",                      "dest": "/usr/share/icons" },
+
+    { "name": "Nordzy Cursors",      "category": "cursors",
+      "git": "https://github.com/alvatip/Nordzy-cursors",
+      "subdir": ".",                          "dest": "/usr/share/icons" }
+
+
+    /* ────────────── CATPPUCCIN SUITE ────────────── */
+    { "name": "Catppuccin Plasma (Mocha-Purple)", "category": "plasma",
+      "git": "https://github.com/catppuccin/kde",
+      "subdir": "plasma/Catppuccin-Mocha-Purple",      "dest": "/usr/share/plasma/desktoptheme" },
+
+    { "name": "Catppuccin Plasma (Latte-Purple)", "category": "plasma",
+      "git": "https://github.com/catppuccin/kde",
+      "subdir": "plasma/Catppuccin-Latte-Purple",      "dest": "/usr/share/plasma/desktoptheme" },
+
+    { "name": "Catppuccin GTK (Mocha-Purple)", "category": "gtk",
+      "git": "https://github.com/catppuccin/gtk",
+      "subdir": "themes/Catppuccin-Mocha-Standard-Purple-Dark", "dest": "/usr/share/themes" },
+
+    { "name": "Catppuccin GTK (Latte-Purple)", "category": "gtk",
+      "git": "https://github.com/catppuccin/gtk",
+      "subdir": "themes/Catppuccin-Latte-Standard-Purple-Light","dest": "/usr/share/themes" },
+
+    { "name": "Catppuccin Kvantum (Mocha)", "category": "kvantum",
+      "git": "https://github.com/catppuccin/kvantum",
+      "subdir": "Kvantum",                                   "dest": "/usr/share/Kvantum" },
+
+    { "name": "Catppuccin SDDM", "category": "sddm",
+      "git": "https://github.com/catppuccin/sddm",
+      "subdir": ".",                                           "dest": "/usr/share/sddm/themes" },
+
+    { "name": "Catppuccin Plymouth (Mocha)", "category": "plymouth",
+      "git": "https://github.com/catppuccin/plymouth",
+      "subdir": "mocha",                                       "dest": "/usr/share/plymouth/themes" },
+
+    { "name": "Catppuccin Icons (Mocha-Purple)", "category": "icons",
+      "git": "https://github.com/catppuccin/icons",
+      "subdir": "mocha-purple",                               "dest": "/usr/share/icons" },
+
+    /* ────────────── NORDIC ────────────── */
+    { "name": "Nordic Plasma", "category": "plasma",
+      "git": "https://github.com/EliverLara/Nordic-kde",
+      "subdir": ".",                                           "dest": "/usr/share/plasma/desktoptheme" },
+
+    { "name": "Nordic GTK", "category": "gtk",
+      "git": "https://github.com/EliverLara/Nordic",
+      "subdir": "Nordic",                                      "dest": "/usr/share/themes" },
+
+    { "name": "Nordic Kvantum", "category": "kvantum",
+      "git": "https://github.com/EliverLara/Nordic-kde",
+      "subdir": "Kvantum",                                     "dest": "/usr/share/Kvantum" },
+
+    /* ────────────── DRACULA ────────────── */
+    { "name": "Dracula Plasma", "category": "plasma",
+      "git": "https://github.com/dracula/kde",
+      "subdir": "plasma",                                      "dest": "/usr/share/plasma/desktoptheme" },
+
+    { "name": "Dracula GTK", "category": "gtk",
+      "git": "https://github.com/dracula/gtk",
+      "subdir": "Dracula",                                     "dest": "/usr/share/themes" },
+
+    /* ────────────── MATCHA-PURPLE ────────────── */
+    { "name": "Matcha-Purple GTK", "category": "gtk",
+      "git": "https://github.com/vinceliuice/Matcha-gtk-theme",
+      "subdir": "Matcha-purple",                               "dest": "/usr/share/themes" },
+
+    /* ────────────── FLUENT-DARK ────────────── */
+    { "name": "Fluent-Dark GTK", "category": "gtk",
+      "git": "https://github.com/vinceliuice/Fluent-gtk-theme",
+      "subdir": "Fluent-dark",                                 "dest": "/usr/share/themes" },
+
+    { "name": "Fluent Kvantum", "category": "kvantum",
+      "git": "https://github.com/vinceliuice/Fluent-gtk-theme",
+      "subdir": "Kvantum",                                     "dest": "/usr/share/Kvantum" },
+
+    /* ────────────── TOKYO NIGHT ────────────── */
+    { "name": "TokyoNight Plasma (Storm)", "category": "plasma",
+      "git": "https://github.com/enkia/tokyo-night-vscode-theme",
+      "subdir": "kde/TokyoNightStorm",                         "dest": "/usr/share/plasma/desktoptheme" },
+
+    /* ────────────── MATERIAL OCEAN ────────────── */
+    { "name": "Material Ocean Plasma", "category": "plasma",
+      "git": "https://github.com/material-ocean/Material-Ocean-KDE",
+      "subdir": "plasma/Material-Ocean",                       "dest": "/usr/share/plasma/desktoptheme" },
+
+    /* ────────────── CURSOR EXTRAS ────────────── */
+    { "name": "Fluent Cursors", "category": "cursors",
+      "git": "https://github.com/vinceliuice/Fluent-cursors",
+      "subdir": ".",                                           "dest": "/usr/share/icons" },
+
+    { "name": "Capitaine Cursors", "category": "cursors",
+      "git": "https://github.com/keeferrourke/capitaine-cursors",
+      "subdir": ".",                                           "dest": "/usr/share/icons" }
+  ]
+}

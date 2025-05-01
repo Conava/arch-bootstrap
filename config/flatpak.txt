@@ -1,0 +1,6 @@
+com.github.jeromerobert.pdfarranger
+com.spotify.Client
+com.usebottles.bottles
+me.proton.Mail
+me.proton.Pass
+us.zoom.Zoom
