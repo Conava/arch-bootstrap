@@ -72,17 +72,43 @@ enable_flatpak() {
 
 # ---------- package install -------------------------------------------------
 install_packages() {
-  info "Installing pacman packages..."
-  [[ -f $PACMAN_LIST ]] &&
-    sudo pacman -Syu --needed --noconfirm $(grep -Ev '^\s*#' "$PACMAN_LIST")
+  info "Installing pacman packages…"
+  if [[ -f $PACMAN_LIST ]]; then
+    mapfile -t repo_pkgs < <(grep -Ev '^\s*(#|$)' "$PACMAN_LIST")
+    if ((${#repo_pkgs[@]})); then
+      if ! sudo pacman -Syu --needed --noconfirm "${repo_pkgs[@]}"; then
+        info "Warning: some pacman packages failed to install or were skipped."
+      fi
+    else
+      info "No pacman packages to install."
+    fi
+  fi
 
-  info "Installing AUR packages with $AUR_HELPER..."
-  [[ -f $AUR_LIST ]] &&
-    "$AUR_HELPER" -S --needed --noconfirm $(grep -Ev '^\s*#' "$AUR_LIST")
+  info "Installing AUR packages with $AUR_HELPER…"
+  if [[ -f $AUR_LIST ]]; then
+    mapfile -t aur_pkgs < <(grep -Ev '^\s*(#|$)' "$AUR_LIST")
+    if ((${#aur_pkgs[@]})); then
+      if ! "$AUR_HELPER" -S --needed --noconfirm "${aur_pkgs[@]}"; then
+        info "Warning: some AUR packages failed to install or were skipped."
+      fi
+    else
+      info "No AUR packages to install."
+    fi
+  fi
 
-  info "Installing Flatpak apps..."
-  [[ -f $FLATPAK_LIST ]] &&
-    xargs -r -a "$FLATPAK_LIST" flatpak install -y flathub
+  info "Installing Flatpak apps…"
+  if [[ -f $FLATPAK_LIST ]]; then
+    mapfile -t flatpaks < <(grep -Ev '^\s*(#|$)' "$FLATPAK_LIST")
+    if ((${#flatpaks[@]})); then
+      if ! flatpak install -y --noninteractive flathub "${flatpaks[@]}"; then
+        info "Warning: some Flatpak apps failed to install or were skipped."
+      fi
+    else
+      info "No Flatpak apps to install."
+    fi
+  fi
+
+  return 0
 }
 
 # ---------- theme install ---------------------------------------------------
