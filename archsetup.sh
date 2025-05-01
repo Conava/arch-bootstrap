@@ -22,12 +22,32 @@ need_root(){ (( EUID )) && die "re-run with sudo/root for this step."; }
 
 # ---------- repo setup ------------------------------------------------------
 setup_aur_helper() {
-  info "Installing chosen AUR helper: $AUR_HELPER"
-  if ! command -v "$AUR_HELPER" &>/dev/null; then
-    sudo pacman -Sy --needed --noconfirm git base-devel
-    sudo bash -c "cd $tmp/${AUR_HELPER}-bin && makepkg -si --noconfirm"
+  info "Installing AUR helper: $AUR_HELPER"
+
+  # skip if already present
+  if command -v "$AUR_HELPER" &>/dev/null; then
+    info "$AUR_HELPER already installed – skipping"
+    return
   fi
+
+  # 1. prerequisites
+  sudo pacman -Sy --needed --noconfirm git base-devel
+
+  # 2. build and install the *-bin package from AUR
+  tmp=$(mktemp -d)
+  git clone --depth=1 "https://aur.archlinux.org/${AUR_HELPER}-bin.git" \
+            "$tmp/${AUR_HELPER}-bin"
+
+  (
+    cd "$tmp/${AUR_HELPER}-bin"
+    # makepkg will prompt sudo internally when it reaches the install step
+    makepkg -si --noconfirm
+  )
+
+  # 3. clean up
+  rm -rf "$tmp"
 }
+
 
 
 enable_chaotic_aur() {
