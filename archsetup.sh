@@ -24,8 +24,7 @@ need_root(){ (( EUID )) && die "re-run with sudo/root for this step."; }
 setup_aur_helper() {
   info "Installing chosen AUR helper: $AUR_HELPER"
   if ! command -v "$AUR_HELPER" &>/dev/null; then
-    sudo pacman -Sy --needed --noconfirm git base-devel     # <- add sudo
-    ...
+    sudo pacman -Sy --needed --noconfirm git base-devel
     sudo bash -c "cd $tmp/${AUR_HELPER}-bin && makepkg -si --noconfirm"
   fi
 }
