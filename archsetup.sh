@@ -22,16 +22,14 @@ need_root(){ (( EUID )) && die "re-run with sudo/root for this step."; }
 
 # ---------- repo setup ------------------------------------------------------
 setup_aur_helper() {
-  info "Installing AUR helper: $AUR_HELPER"
+  info "Installing chosen AUR helper: $AUR_HELPER"
   if ! command -v "$AUR_HELPER" &>/dev/null; then
-    need_root
-    pacman -Sy --needed --noconfirm git base-devel
-    tmp=$(mktemp -d)
-    git -C "$tmp" clone --depth=1 "https://aur.archlinux.org/${AUR_HELPER}-bin.git"
-    (cd "$tmp/${AUR_HELPER}-bin" && makepkg -si --noconfirm)
-    rm -rf "$tmp"
+    sudo pacman -Sy --needed --noconfirm git base-devel     # <- add sudo
+    ...
+    sudo bash -c "cd $tmp/${AUR_HELPER}-bin && makepkg -si --noconfirm"
   fi
 }
+
 
 enable_chaotic_aur() {
   info "Adding Chaotic-AUR repo"
