@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# archsetup.sh  –  reproducible Arch / Chaotic-AUR / Flatpak deployer
-# Author: Conava (Marlon Kranz; dev@marlonkranz.com)  License: MIT
+# archsetup.sh – reproducible Arch / Chaotic-AUR / Flatpak deployer
+# Author: Conava (Marlon Kranz)  • License: MIT
 set -euo pipefail
 IFS=$'\n\t'
 
@@ -12,124 +12,116 @@ FLATPAK_LIST="$CFG_DIR/flatpak.txt"
 THEME_JSON="$CFG_DIR/themes.json"
 DOTFILES_URL="$(< "$(dirname "$0")/dotfiles_repo.txt")"
 
-AUR_HELPER=${AUR_HELPER:-paru}   # default helper (yay supported too)
-MENU=${MENU:-false}              # set MENU=true for interactive fzf/dialog
+AUR_HELPER=${AUR_HELPER:-paru}   # or yay
+MENU=${MENU:-false}              # MENU=true → fzf/whiptail UI
 ## ---------------------------------------------------------------------------
 
-# ---------- helpers ---------------------------------------------------------
 die(){ echo "Error: $*" >&2; exit 1; }
-info(){ echo -e "\\e[1;34m[INFO]\\e[0m $*"; }
-run(){ echo -e "\\e[1;32m[CMD ]\\e[0m $*"; "$@"; }
+info(){ echo -e "\e[1;34m[INFO]\e[0m $*"; }
 need_root(){ (( EUID )) && die "re-run with sudo/root for this step."; }
 
 # ---------- repo setup ------------------------------------------------------
 setup_aur_helper() {
-  info "Installing chosen AUR helper: $AUR_HELPER"
-  if ! command -v "$AUR_HELPER" &>/dev/null ; then
+  info "Installing AUR helper: $AUR_HELPER"
+  if ! command -v "$AUR_HELPER" &>/dev/null; then
     need_root
     pacman -Sy --needed --noconfirm git base-devel
     tmp=$(mktemp -d)
     git -C "$tmp" clone --depth=1 "https://aur.archlinux.org/${AUR_HELPER}-bin.git"
-    run bash -c "cd $tmp/${AUR_HELPER}-bin && makepkg -si --noconfirm"
+    (cd "$tmp/${AUR_HELPER}-bin" && makepkg -si --noconfirm)
     rm -rf "$tmp"
   fi
 }
 
 enable_chaotic_aur() {
-  info "Enabling Chaotic-AUR repository"
-  local KEY="3056513887B78AEB"   # upstream master key  :contentReference[oaicite:0]{index=0}
+  info "Adding Chaotic-AUR repo"
+  local KEY="3056513887B78AEB"
   sudo pacman-key --recv-key "$KEY" --keyserver keyserver.ubuntu.com
   sudo pacman-key --lsign-key "$KEY"
   sudo pacman -U --noconfirm \
-    'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' \
-    'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'   :contentReference[oaicite:1]{index=1}
-  if ! grep -q '^\[chaotic-aur\]' /etc/pacman.conf; then
-    echo -e '\n[chaotic-aur]\nInclude = /etc/pacman.d/chaotic-mirrorlist' | \
-      sudo tee -a /etc/pacman.conf
-  fi
+       'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' \
+       'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
+  grep -q '^\[chaotic-aur\]' /etc/pacman.conf ||
+    echo -e '\n[chaotic-aur]\nInclude = /etc/pacman.d/chaotic-mirrorlist' |
+    sudo tee -a /etc/pacman.conf >/dev/null
 }
 
 enable_flatpak() {
   info "Installing Flatpak + Flathub"
   sudo pacman -Syu --needed --noconfirm flatpak
   flatpak remote-add --if-not-exists flathub \
-    https://flathub.org/repo/flathub.flatpakrepo   :contentReference[oaicite:2]{index=2}
+    https://flathub.org/repo/flathub.flatpakrepo
 }
 
 # ---------- package install -------------------------------------------------
 install_packages() {
   info "Installing pacman packages..."
-  [[ -f $PACMAN_LIST ]] && sudo pacman -Syu --needed --noconfirm $(grep -Ev '^\s*#' "$PACMAN_LIST")
+  [[ -f $PACMAN_LIST ]] &&
+    sudo pacman -Syu --needed --noconfirm $(grep -Ev '^\s*#' "$PACMAN_LIST")
 
   info "Installing AUR packages with $AUR_HELPER..."
-  [[ -f $AUR_LIST ]] && "$AUR_HELPER" -S --needed --noconfirm $(grep -Ev '^\s*#' "$AUR_LIST")
+  [[ -f $AUR_LIST ]] &&
+    "$AUR_HELPER" -S --needed --noconfirm $(grep -Ev '^\s*#' "$AUR_LIST")
 
-  info "Installing Flatpak packages..."
-  while read -r app; do
-      [[ -z $app || $app == \#* ]] && continue
-      flatpak install -y flathub "$app"
-  done < "$FLATPAK_LIST"
+  info "Installing Flatpak apps..."
+  [[ -f $FLATPAK_LIST ]] &&
+    xargs -r -a "$FLATPAK_LIST" flatpak install -y flathub
 }
 
 # ---------- theme install ---------------------------------------------------
 install_themes() {
-  info "Installing third-party themes..."
+  info "Cloning & copying themes..."
   jq -r '.themes[]|@base64' "$THEME_JSON" | while read -r row; do
     _jq(){ echo "$row" | base64 -d | jq -r "$1"; }
-    name=$(_jq '.name'); category=$(_jq '.category')
-    git_url=$(_jq '.git'); dest=$(_jq '.dest')
-    info "→ $name ($category)"
-    [[ -d /tmp/theme-$name ]] && rm -rf /tmp/theme-$name
-    git clone --depth=1 "$git_url" "/tmp/theme-$name"
+    name=$(_jq '.name'); dest=$(_jq '.dest'); git_url=$(_jq '.git')
+    subdir=$(_jq '.subdir // "."')
+    info "→ $name"
+    tmp="/tmp/theme-$name"
+    rm -rf "$tmp"
+    git clone --depth=1 "$git_url" "$tmp"
     sudo mkdir -p "$dest"
-    sudo cp -r "/tmp/theme-$name/$(_jq '.subdir // "."')"/* "$dest/"
+    sudo cp -r "$tmp/$subdir"/* "$dest/"
   done
 }
 
 # ---------- dotfiles --------------------------------------------------------
 apply_dotfiles() {
-  info "Applying dotfiles with chezmoi"
-  if ! command -v chezmoi &>/dev/null ; then
-    sudo pacman -S --needed --noconfirm chezmoi
-  fi
-  chezmoi init --apply "$DOTFILES_URL"   :contentReference[oaicite:3]{index=3}
+  info "Applying dotfiles via chezmoi"
+  command -v chezmoi &>/dev/null || sudo pacman -S --needed --noconfirm chezmoi
+  chezmoi init --apply "$DOTFILES_URL"
 }
 
 # ---------- services --------------------------------------------------------
 enable_services() {
   info "Enabling OneDrive (user service)"
-  if ! command -v onedrive &>/dev/null ; then
-    "$AUR_HELPER" -S --needed --noconfirm onedrive-abraunegg
-  fi
-  systemctl --user enable --now onedrive   :contentReference[oaicite:4]{index=4}
+  command -v onedrive &>/dev/null || "$AUR_HELPER" -S --needed --noconfirm onedrive-abraunegg
+  systemctl --user enable --now onedrive
 }
 
 # ---------- update lists ----------------------------------------------------
 update_package_lists() {
-  info "Updating package list files..."
-  pacman -Qqe > "$PACMAN_LIST"
-  pacman -Qqm > "$AUR_LIST"
-  flatpak list --app --columns=application | tail -n +1 > "$FLATPAK_LIST"  # skip header
+  info "Saving explicit package lists..."
+  pacman -Qqen | sort >  "$PACMAN_LIST"     # native, explicit
+  pacman -Qqem | sort >  "$AUR_LIST"        # foreign, explicit
+  flatpak list --app --columns=application | sort > "$FLATPAK_LIST"
   git add "$PACMAN_LIST" "$AUR_LIST" "$FLATPAK_LIST"
-  git commit -m "Update package lists ($(date +%F))" && git push
-  info "Package lists pushed."
+  git commit -m "update: explicit package lists $(date +%F)" && git push
+  info "Lists pushed to repo."
 }
 
 # ---------- CLI -------------------------------------------------------------
 usage(){
 cat <<EOF
 Usage: $0 [flags]
-
-Flags:
-  --all           Run every step (repos, packages, themes, dotfiles, services)
-  --repos         Only set up paru/yay, Chaotic-AUR, Flatpak
-  --packages      Only install packages
-  --themes        Only install themes
-  --dotfiles      Only apply dotfiles
-  --services      Only enable services
-  --update-lists  Refresh package list files & push
-  --menu          Launch interactive menu (requires fzf or dialog)
-  -h|--help       Show this help
+  --all            Run every step
+  --repos          Setup AUR helper, Chaotic-AUR, Flatpak
+  --packages       Install packages (pacman/AUR/Flatpak)
+  --themes         Sync themes
+  --dotfiles       Apply dotfiles
+  --services       Enable background services
+  --update-lists   Refresh package-list files & push
+  --menu           Interactive menu (fzf or dialog)
+  -h,--help        Show this help
 EOF
 }
 
@@ -142,16 +134,8 @@ run_menu(){
       a "All" r "Repos" p "Packages" t "Themes" d "Dotfiles" s "Services" u "Update-lists" q Quit 2> /tmp/choice || return
     choice=$(< /tmp/choice); rm -f /tmp/choice
   fi
-  case $choice in
-    All) main --all ;;
-    Repos) main --repos ;;
-    Packages) main --packages ;;
-    Themes) main --themes ;;
-    Dotfiles) main --dotfiles ;;
-    Services) main --services ;;
-    Update-lists) main --update-lists ;;
-    *) exit 0 ;;
-  esac
+  [[ $choice == Quit || -z $choice ]] && return
+  main --${choice,,}         # lowercase flag
 }
 
 main(){
@@ -173,7 +157,6 @@ main(){
   done
 
   if $DO_ALL; then
-  # Comment out any step you dont need
     setup_aur_helper
     enable_chaotic_aur
     enable_flatpak
