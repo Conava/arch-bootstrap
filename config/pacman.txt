@@ -105,6 +105,9 @@ phonon-qt6-vlc
 pipewire-alsa
 pipewire-pulse
 plasma-desktop
+sddm
+dolphin
+konsole
 plymouth
 poppler-glib
 powerdevil
