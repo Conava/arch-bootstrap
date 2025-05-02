@@ -113,29 +113,29 @@ install_packages() {
 
 # ---------- theme install ---------------------------------------------------
 install_themes() {
-  info "Cloning & copying themes…"
-
-  # ensure jq is available
-  if ! command -v jq &>/dev/null; then
-    info "jq not found → installing jq"
-    sudo pacman -Sy --needed --noconfirm jq
-  fi
-
-  # now parse & apply each theme
+  info "Cloning & installing themes…"
   jq -r '.themes[] | @base64' "$THEME_JSON" | while read -r row; do
     _jq(){ echo "$row" | base64 -d | jq -r "$1"; }
-    name=$(_jq '.name')
-    dest=$(_jq '.dest')
-    git_url=$(_jq '.git')
-    subdir=$(_jq '.subdir // "."')
+    name=$(_jq '.name'); git_url=$(_jq '.git')
+    dest=$(_jq '.dest'); subdir=$(_jq '.subdir // "."')
 
     info "→ $name"
-    tmp="/tmp/theme-$name"
-    rm -rf "$tmp"
-
+    tmp=$(mktemp -d)
     git clone --depth=1 "$git_url" "$tmp"
-    sudo mkdir -p "$dest"
-    sudo cp -r "$tmp/$subdir"/* "$dest/"
+
+    # if the repo provides an installer, run it
+    if [[ -x "$tmp/install.sh" ]]; then
+      (
+        cd "$tmp"
+        sudo bash ./install.sh
+      )
+    else
+      # static files only
+      sudo mkdir -p "$dest"
+      sudo cp -r "$tmp/$subdir"/. "$dest"/
+    fi
+
+    rm -rf "$tmp"
   done
 }
 
