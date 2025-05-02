@@ -142,7 +142,7 @@
 
     { "name": "Nordzy Cursors",      "category": "cursors",
       "git": "https://github.com/alvatip/Nordzy-cursors",
-      "subdir": ".",                          "dest": "/usr/share/icons" }
+      "subdir": ".",                          "dest": "/usr/share/icons" },
 
     { "name": "Catppuccin Plasma (Mocha-Purple)", "category": "plasma",
       "git": "https://github.com/catppuccin/kde",
