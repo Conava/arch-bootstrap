@@ -113,19 +113,32 @@ install_packages() {
 
 # ---------- theme install ---------------------------------------------------
 install_themes() {
-  info "Cloning & copying themes..."
-  jq -r '.themes[]|@base64' "$THEME_JSON" | while read -r row; do
+  info "Cloning & copying themes…"
+
+  # ensure jq is available
+  if ! command -v jq &>/dev/null; then
+    info "jq not found → installing jq"
+    sudo pacman -Sy --needed --noconfirm jq
+  fi
+
+  # now parse & apply each theme
+  jq -r '.themes[] | @base64' "$THEME_JSON" | while read -r row; do
     _jq(){ echo "$row" | base64 -d | jq -r "$1"; }
-    name=$(_jq '.name'); dest=$(_jq '.dest'); git_url=$(_jq '.git')
+    name=$(_jq '.name')
+    dest=$(_jq '.dest')
+    git_url=$(_jq '.git')
     subdir=$(_jq '.subdir // "."')
+
     info "→ $name"
     tmp="/tmp/theme-$name"
     rm -rf "$tmp"
+
     git clone --depth=1 "$git_url" "$tmp"
     sudo mkdir -p "$dest"
     sudo cp -r "$tmp/$subdir"/* "$dest/"
   done
 }
+
 
 # ---------- dotfiles --------------------------------------------------------
 apply_dotfiles() {
