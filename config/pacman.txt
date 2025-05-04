@@ -89,7 +89,6 @@ ntp
 obsidian
 obs-studio
 octopi
-oh-my-posh-bin
 okular
 onedrive-abraunegg
 opendesktop-fonts
@@ -156,4 +155,4 @@ kscreen
 packagekit-qt6
 plasma-nm
 plasma-pa
-
+zsh

@@ -141,6 +141,35 @@ install_themes() {
   done
 }
 
+# ---------- zsh plugins --------------------------------------------------------
+install_zsh_plugins() {
+  info "Installing Oh-My-Zsh plugins…"
+  # default $ZSH_CUSTOM or fallback
+  local ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+  local plugins=(
+    zsh-users/zsh-autosuggestions
+    zsh-users/zsh-syntax-highlighting
+  )
+
+  sudo pacman -S --needed --noconfirm fzf  # ensure fzf is present
+
+  mkdir -p "$ZSH_CUSTOM/plugins"
+  for repo in "${plugins[@]}"; do
+    local name=${repo##*/}           # e.g. "zsh-autosuggestions"
+    local dest="$ZSH_CUSTOM/plugins/$name"
+
+    if [[ -d $dest/.git ]]; then
+      info "→ $name already installed, pulling updates…"
+      git -C "$dest" pull --ff-only
+    else
+      info "→ Cloning $name…"
+      git clone --depth=1 "https://github.com/$repo.git" "$dest"
+    fi
+  done
+
+  info "Oh-My-Zsh plugins done ✔️"
+}
+
 
 # ---------- dotfiles --------------------------------------------------------
 apply_dotfiles() {
@@ -221,6 +250,7 @@ main(){
       --packages)     install_packages ;;
       --themes)       install_themes ;;
       --dotfiles)     apply_dotfiles ;;
+      --zsh-plugins)  install_zsh_plugins ;;
       --services)     enable_services ;;
       --update-lists) update_package_lists ;;
       --menu)         run_menu; return ;;
@@ -237,6 +267,7 @@ main(){
     install_packages
     install_themes
     apply_dotfiles
+    install_zsh_plugins
     enable_services
   fi
 }
