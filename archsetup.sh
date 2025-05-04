@@ -113,6 +113,13 @@ install_packages() {
 
 # ---------- theme install ---------------------------------------------------
 install_themes() {
+for cmd in git jq; do
+  if ! command -v "$cmd" &>/dev/null; then
+    info "$cmd not found → installing via pacman"
+    sudo pacman -Sy --needed --noconfirm "$cmd" \
+      || die "Failed to install $cmd"
+  fi
+done
   info "Cloning themes into ~/.themes/<category>/…"
 
   THEMES_DIR="$HOME/.themes"
