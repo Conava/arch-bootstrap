@@ -37,6 +37,6 @@
     { "git": "https://github.com/exequtic/apdatifier", "category": "widget" },
 
     { "git": "https://github.com/EliverLara/firefox-sweet-theme", "category": "firefox" },
-    { "git": "https://github.com/EliverLara/firefox-nordic-theme", "category": "firefox" },
+    { "git": "https://github.com/EliverLara/firefox-nordic-theme", "category": "firefox" }
   ]
 }
