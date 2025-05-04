@@ -113,29 +113,31 @@ install_packages() {
 
 # ---------- theme install ---------------------------------------------------
 install_themes() {
-  info "Cloning & installing themes…"
-  jq -r '.themes[] | @base64' "$THEME_JSON" | while read -r row; do
-    _jq(){ echo "$row" | base64 -d | jq -r "$1"; }
-    name=$(_jq '.name'); git_url=$(_jq '.git')
-    dest=$(_jq '.dest'); subdir=$(_jq '.subdir // "."')
+  info "Cloning themes into ~/.themes/<category>/…"
 
-    info "→ $name"
-    tmp=$(mktemp -d)
-    git clone --depth=1 "$git_url" "$tmp"
+  THEMES_DIR="$HOME/.themes"
+  jq -c '.themes[]' "$THEME_JSON" | while read -r entry; do
+    git_url=$(jq -r '.git' <<<"$entry")
+    category=$(jq -r '.category' <<<"$entry")
+    # derive a folder name from the repo URL
+    name=$(basename "$git_url" .git)
+    dest="$THEMES_DIR/$category/$name"
 
-    # if the repo provides an installer, run it
-    if [[ -x "$tmp/install.sh" ]]; then
-      (
-        cd "$tmp"
-        sudo bash ./install.sh
-      )
-    else
-      # static files only
-      sudo mkdir -p "$dest"
-      sudo cp -r "$tmp/$subdir"/. "$dest"/
-    fi
-
-    rm -rf "$tmp"
+    info "→ [$category] $name"
+    (
+      set -e
+      mkdir -p "$(dirname "$dest")"
+      # skip if already cloned
+      if [[ -d $dest/.git ]]; then
+        info "   • Already exists, pulling updates…"
+        git -C "$dest" pull --ff-only
+      else
+        git clone --depth=1 "$git_url" "$dest"
+      fi
+    ) || {
+      info "⚠️  Failed to clone '$name', skipping."
+    }
+    info "Themes cloned, please manually install from ~./themes"
   done
 }
 
@@ -152,6 +154,22 @@ enable_services() {
   info "Enabling OneDrive (user service)"
   command -v onedrive &>/dev/null || "$AUR_HELPER" -S --needed --noconfirm onedrive-abraunegg
   systemctl --user enable --now onedrive
+
+  info "Enabling system services, path units & timers…"
+  # List all units you want enabled/started
+  local units=(
+    grub-btrfs-snapper.path
+    sddm.service
+    NetworkManager.service
+    snapper-boot.timer
+    snapper-cleanup.timer
+    snapper-timeline.timer
+  )
+
+  # Enable & start them atomically
+  sudo systemctl enable --now "${units[@]}"
+
+  info "All listed services/timers have been enabled."
 }
 
 # ---------- update lists ----------------------------------------------------
