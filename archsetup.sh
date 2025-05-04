@@ -10,7 +10,7 @@ PACMAN_LIST="$CFG_DIR/pacman.txt"
 AUR_LIST="$CFG_DIR/aur.txt"
 FLATPAK_LIST="$CFG_DIR/flatpak.txt"
 THEME_JSON="$CFG_DIR/themes.json"
-DOTFILES_URL="$(< "$(dirname "$0")/dotfiles_repo.txt")"
+DOTFILES_URL="$CFG_DIR/dotfiles_repo.txt"
 
 AUR_HELPER=${AUR_HELPER:-paru}   # or yay
 MENU=${MENU:-false}              # MENU=true → fzf/whiptail UI
@@ -72,44 +72,58 @@ enable_flatpak() {
 
 # ---------- package install -------------------------------------------------
 install_packages() {
-  info "Installing pacman packages…"
-  if [[ -f $PACMAN_LIST ]]; then
-    mapfile -t repo_pkgs < <(grep -Ev '^\s*(#|$)' "$PACMAN_LIST")
-    if ((${#repo_pkgs[@]})); then
-      if ! sudo pacman -Syu --needed --noconfirm "${repo_pkgs[@]}"; then
-        info "Warning: some pacman packages failed to install or were skipped."
+  local PKG_FILE="$CFG_DIR/packages.txt"
+  info "Installing all packages via $AUR_HELPER from $PKG_FILE…"
+
+  # 1. Pacman/AUR section
+  if [[ -f $PKG_FILE ]]; then
+    mapfile -t pkgs < <(grep -Ev '^\s*(#|$)' "$PKG_FILE")
+    if ((${#pkgs[@]})); then
+      info "→ ${#pkgs[@]} total PKGBUILD targets"
+      echo "    ${pkgs[*]}"
+
+      info "↻ Syncing pacman DB…"
+      sudo pacman -Sy || die "Failed to sync pacman DB"
+
+      info "↪ Installing via $AUR_HELPER (pacman + AUR)…"
+      if ! "$AUR_HELPER" -S --needed --noconfirm "${pkgs[@]}"; then
+        die "One or more pacman/AUR installs failed—check output above"
       fi
+      info "✅ Pacman & AUR installs done"
     else
-      info "No pacman packages to install."
+      info "packages.txt is empty → skipping pacman/AUR step"
     fi
+  else
+    info "No packages.txt at $PKG_FILE → skipping pacman/AUR"
   fi
 
-  info "Installing AUR packages with $AUR_HELPER…"
-  if [[ -f $AUR_LIST ]]; then
-    mapfile -t aur_pkgs < <(grep -Ev '^\s*(#|$)' "$AUR_LIST")
-    if ((${#aur_pkgs[@]})); then
-      if ! "$AUR_HELPER" -S --needed --noconfirm "${aur_pkgs[@]}"; then
-        info "Warning: some AUR packages failed to install or were skipped."
-      fi
-    else
-      info "No AUR packages to install."
-    fi
-  fi
-
+  # 2. Flatpak section
   info "Installing Flatpak apps…"
   if [[ -f $FLATPAK_LIST ]]; then
     mapfile -t flatpaks < <(grep -Ev '^\s*(#|$)' "$FLATPAK_LIST")
     if ((${#flatpaks[@]})); then
+      info "→ ${#flatpaks[@]} apps to flatpak-install"
+      echo "    ${flatpaks[*]}"
+
+      # ensure flathub remote exists
+      flatpak remote-info flathub &>/dev/null \
+        || die "Flathub remote not found—run enable_flatpak first"
+
       if ! flatpak install -y --noninteractive flathub "${flatpaks[@]}"; then
-        info "Warning: some Flatpak apps failed to install or were skipped."
+        info "⚠️ Some Flatpak apps failed or were skipped"
+      else
+        info "✅ Flatpak installs done"
       fi
     else
-      info "No Flatpak apps to install."
+      info "No entries in flatpak.txt → skipping Flatpak step"
     fi
+  else
+    info "No flatpak.txt at $FLATPAK_LIST → skipping Flatpak"
   fi
 
   return 0
 }
+
 
 # ---------- theme install ---------------------------------------------------
 install_themes() {

@@ -1,5 +1,0 @@
-intellij-idea-ultimate-edition
-openai-chatgpt-nativefier
-pycharm-professional
-oh-my-zsh
-oh-my-posh-bin
