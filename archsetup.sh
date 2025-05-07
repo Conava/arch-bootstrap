@@ -103,11 +103,14 @@ install_packages() {
     mapfile -t flatpaks < <(grep -Ev '^\s*(#|$)' "$FLATPAK_LIST")
     if ((${#flatpaks[@]})); then
       info "→ ${#flatpaks[@]} apps to flatpak-install"
-      echo "    ${flatpaks[*]}"
+      echo "${flatpaks[*]}"
 
       # ensure flathub remote exists
-      flatpak remote-info flathub &>/dev/null \
-        || die "Flathub remote not found—run enable_flatpak first"
+      if ! flatpak remotes --columns=name | grep -xq "flathub"; then
+        info "Flathub remote missing - adding it now ..."
+        sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo \
+        || die "⚠️ Failed to add flathub remote"
+      fi
 
       if ! flatpak install -y --noninteractive flathub "${flatpaks[@]}"; then
         info "⚠️ Some Flatpak apps failed or were skipped"
@@ -196,8 +199,12 @@ install_zsh_plugins() {
 apply_dotfiles() {
   info "Applying dotfiles via chezmoi"
   command -v chezmoi &>/dev/null || sudo pacman -S --needed --noconfirm chezmoi
-  chezmoi init --apply "$DOTFILES_URL"
+
+  # Read the actual Git repo URL from the text file:
+  repo=$(< "$DOTFILES_URL")
+  chezmoi init --apply "$repo"
 }
+
 
 # ---------- services --------------------------------------------------------
 enable_services() {

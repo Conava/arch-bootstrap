@@ -1,1 +1,1 @@
-https://github.com/Conaga/dotfiles
+https://github.com/Conava/dotfiles.git

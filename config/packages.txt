@@ -28,6 +28,7 @@ exfatprogs
 ffmpegthumbnailer
 ffmpegthumbs
 fsarchiver
+firefox
 fwupd
 gimp
 gparted
@@ -136,5 +137,6 @@ zsh
 intellij-idea-ultimate-edition
 openai-chatgpt-nativefier
 pycharm-professional
-oh-my-zsh
+oh-my-zsh-git
 oh-my-posh-bin
+librewolf
