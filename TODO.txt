@@ -1,0 +1,19 @@
+Set zsh as default shell chsh -s $(which zsh)
+
+install exa to make zshrc work
+
+Import and set konosle profile
+
+set yakuake in autostart and setup
+
+apply kde settings
+
+start up wireplumber (systemctl --user enable --now wireplumber.service)
+
+install qpwgraph
+
+add sof-firmware to packagelist
+
+make linux linux default
+
+apply konsole profile to yakuake
