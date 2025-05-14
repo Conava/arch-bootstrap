@@ -260,6 +260,7 @@ Usage: $0 [flags]
   --packages       Install packages (pacman/AUR/Flatpak)
   --themes         Sync themes
   --dotfiles       Apply dotfiles
+  --zsh            Install and apply ZSH
   --services       Enable background services
   --update-lists   Refresh package-list files & push
   --menu           Interactive menu (fzf or dialog)
@@ -289,7 +290,7 @@ main(){
       --packages)     install_packages ;;
       --themes)       install_themes ;;
       --dotfiles)     apply_dotfiles ;;
-      --zsh-plugins)  install_zsh_plugins ;;
+      --zsh)          install_zsh ;;
       --services)     enable_services ;;
       --update-lists) update_package_lists ;;
       --menu)         run_menu; return ;;
@@ -306,7 +307,7 @@ main(){
     install_packages
     install_themes
     apply_dotfiles
-    install_zsh_plugins
+    install_zsh
     enable_services
   fi
 }
