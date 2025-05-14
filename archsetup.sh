@@ -166,24 +166,28 @@ done
 }
 
 # ---------- zsh plugins --------------------------------------------------------
-install_zsh_plugins() {
+install_zsh() {
+  info "Ensuring Oh My Zsh is installed…"
+
+  # 1) Clone the official repo if *no* system-wide or user copy exists
+  if [[ ! -d "$HOME/.oh-my-zsh" && ! -d "/usr/share/oh-my-zsh" ]]; then
+    info "→ Installing oh-my-zsh"
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  fi
+
+  # 2) Install Oh-My-Zsh plugins (zsh-autosuggestions + syntax-highlighting)
   info "Installing Oh-My-Zsh plugins…"
-  # default $ZSH_CUSTOM or fallback
   local ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
   local plugins=(
     zsh-users/zsh-autosuggestions
     zsh-users/zsh-syntax-highlighting
   )
-
-  sudo pacman -S --needed --noconfirm fzf  # ensure fzf is present
-
   mkdir -p "$ZSH_CUSTOM/plugins"
   for repo in "${plugins[@]}"; do
-    local name=${repo##*/}           # e.g. "zsh-autosuggestions"
-    local dest="$ZSH_CUSTOM/plugins/$name"
-
+    name=${repo##*/}                            # e.g. "zsh-autosuggestions"
+    dest="$ZSH_CUSTOM/plugins/$name"
     if [[ -d $dest/.git ]]; then
-      info "→ $name already installed, pulling updates…"
+      info "→ $name already present, pulling latest…"
       git -C "$dest" pull --ff-only
     else
       info "→ Cloning $name…"
@@ -191,7 +195,14 @@ install_zsh_plugins() {
     fi
   done
 
-  info "Oh-My-Zsh plugins done ✔️"
+  # 4) Change your login shell to zsh if it isn’t already
+  current_shell=$(getent passwd "${SUDO_USER:-$USER}" | cut -d: -f7)
+  if [[ $current_shell != "$(command -v zsh)" ]]; then
+    info "Changing default shell to zsh for user ${SUDO_USER:-$USER}"
+    chsh -s "$(command -v zsh)" "${SUDO_USER:-$USER}"
+  fi
+
+  info "Oh-My-Zsh setup complete ✔️"
 }
 
 

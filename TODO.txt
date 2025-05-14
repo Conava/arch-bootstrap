@@ -19,5 +19,3 @@ make linux linux default
 apply konsole profile to yakuake
 
 /home/marlon/.zshrc:source:74: no such file or directory: /home/marlon/.oh-my-zsh/oh-my-zsh.sh
-/home/marlon/.zshrc:source:127: no such file or directory: /usr/share/doc/pkgfile/command-not-found.zsh
-
