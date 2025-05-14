@@ -175,10 +175,18 @@ install_zsh() {
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
   fi
 
+  info "→ Installing autojump package"
+  sudo pacman -S --needed --noconfirm autojump
+
+
   # 2) Install Oh-My-Zsh plugins (zsh-autosuggestions + syntax-highlighting)
   info "Installing Oh-My-Zsh plugins…"
   local ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
   local plugins=(
+    zsh-users/zsh-autosuggestions
+    zsh-users/zsh-syntax-highlighting
+    zsh-users/zsh-completions
+    Aloxaf/fzf-tab
     zsh-users/zsh-autosuggestions
     zsh-users/zsh-syntax-highlighting
   )
